@@ -1,8 +1,3 @@
-git clone <url-del-repo>
-npm install
-npm run build
-npm start
-
 # Lambda ToDo API (Simulación Local)
 
 Este proyecto es una **simulación local** de un endpoint AWS Lambda para gestionar tareas (to-do items). Permite crear y consultar tareas usando TypeScript, sin necesidad de AWS.
