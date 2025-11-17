@@ -69,7 +69,7 @@ npm test
 
 ### GET
 ```bash
-curl http://localhost:3000/todos
+curl https://lambda-todo-local.onrender.com/todos
 ```
 
 ### POST
