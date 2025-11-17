@@ -2,7 +2,16 @@
 
 Este proyecto es una **simulación local** de un endpoint AWS Lambda para gestionar tareas (to-do items). Permite crear y consultar tareas usando TypeScript, sin necesidad de AWS.
 
-## Funcionalidades
+## 🚀 Despliegue en vivo
+
+El proyecto está desplegado en Render y accesible públicamente:
+
+- **URL Base**: https://lambda-todo-local.onrender.com/
+- **Endpoints**: 
+  - `GET /todos` - Obtener todas las tareas
+  - `POST /todos` - Crear una nueva tarea
+
+---
 
 - **GET**: Devuelve todas las tareas almacenadas en memoria.
 - **POST**: Crea una nueva tarea. Requiere enviar el campo `titulo`.
@@ -72,57 +81,84 @@ lambda-todo/
 	Servidor escuchando en puerto 3000
 	```
 
-## Cómo probar con curl
+---
 
-**Obtener todas las tareas:**
-```bash
-curl https://lambda-todo-local.onrender.com/todos
+## ¿Por qué el proyecto no tiene datos persistentes?
+
+Este proyecto **almacena datos en memoria** (variable `fakeDatabase` en `service.ts`), lo que significa:
+
+✅ **Mientras la app está corriendo**: Los datos se guardan y puedes consultarlos.  
+❌ **Cuando la app se reinicia**: Los datos se pierden.
+
+### Razones de este diseño:
+
+1. **Simulación realista de Lambda**: AWS Lambda es *stateless*. No guarda estado entre ejecuciones. Este proyecto simula ese comportamiento.
+2. **Sin base de datos externa**: Para mantener simplicidad. Una app real usaría DynamoDB, PostgreSQL o MongoDB.
+3. **Render reinicia periódicamente**: Render puede reiniciar tu app cuando:
+   - No recibe peticiones por mucho tiempo (free tier)
+   - Hay actualizaciones de sistema
+   - Se alcanza límite de memoria
+
+### Si quieres persistencia real:
+
+Conecta una base de datos (ej. MongoDB Atlas gratuito):
+```typescript
+// En service.ts, en lugar de fakeDatabase
+import mongoose from 'mongoose';
+const Todo = mongoose.model('Todo', todoSchema);
+export const getAllTodos = async () => await Todo.find();
 ```
 
-**Crear una nueva tarea:**
+---
+
+## 📖 Cómo funcionan los endpoints
+
+## 📋 Pruebas locales con curl
+
+Si ejecutas `npm start` en tu máquina local, el servidor estará en `http://localhost:3000`:
+
+**GET local**:
 ```bash
-curl -X POST https://lambda-todo-local.onrender.com/todos \
-  -H "Content-Type: application/json" \
-  -d '{"titulo": "Mi nueva tarea"}'
+curl http://localhost:3000/todos
 ```
 
-**Validación en acción:**
+**POST local**:
 ```bash
-# Falla: título muy corto
-curl -X POST https://lambda-todo-local.onrender.com/todos \
+curl -X POST http://localhost:3000/todos \
   -H "Content-Type: application/json" \
-  -d '{"titulo": "ab"}'
-
-# Falla: título vacío
-curl -X POST https://lambda-todo-local.onrender.com/todos \
-  -H "Content-Type: application/json" \
-  -d '{"titulo": "   "}'
-
-# Éxito: título válido
-curl -X POST https://lambda-todo-local.onrender.com/todos \
-  -H "Content-Type: application/json" \
-  -d '{"titulo": "Aprender AWS Lambda"}'
+  -d '{"titulo": "Mi tarea local"}'
 ```
 
-## Mejoras implementadas
+---
+
+## ✅ Mejoras implementadas
 
 ### ✅ Validación robusta del POST
-- Título debe ser string (no números ni otros tipos)
-- Longitud mínima: 3 caracteres
-- Longitud máxima: 100 caracteres
-- No permite títulos vacíos o solo espacios en blanco
-- Trim automático de espacios
+- ✓ Título debe ser string (no números ni otros tipos)
+- ✓ Longitud mínima: 3 caracteres
+- ✓ Longitud máxima: 100 caracteres
+- ✓ No permite títulos vacíos o solo espacios en blanco
+- ✓ Trim automático de espacios
+- ✓ Mensajes de error descriptivos para cada validación
 
-### ✅ Arquitectura profesional
-- **handler.ts**: Lógica principal tipo Lambda
-- **service.ts**: Lógica de negocio separada (CRUD)
-- **utils/response.ts**: Helpers para respuestas HTTP estándar
-- **server.ts**: Servidor Express que expone la API
+### ✅ Arquitectura profesional (similar a AWS)
+- ✓ **handler.ts**: Lógica principal tipo Lambda
+- ✓ **service.ts**: Lógica de negocio separada (CRUD)
+- ✓ **utils/response.ts**: Helpers para respuestas HTTP estándar
+- ✓ **server.ts**: Servidor Express que expone la API
+- ✓ Separación clara de responsabilidades
+- ✓ Fácil de escalar y mantener
 
-### ✅ Testing completo
-- 10 tests unitarios con Vitest
-- Cubre validación, errores y casos de éxito
-- Ejecuta con `npm test`
+### ✅ Testing completo (QA como profesional)
+- ✓ 10 tests unitarios con Vitest
+- ✓ Cubre validación, errores y casos de éxito
+- ✓ Ejecuta con `npm test`
+- ✓ Demuestra calidad de código
+
+### ✅ Despliegue en producción
+- ✓ API desplegada en Render
+- ✓ Accesible públicamente
+- ✓ CI/CD automático desde GitHub
 
 ## Notas
 
@@ -132,20 +168,6 @@ curl -X POST https://lambda-todo-local.onrender.com/todos \
 
 ## Créditos
 
-Proyecto desarrollado como parte de la prueba técnica de NXT Legaltech.
-
-Inspirado en el ejemplo de AWS Lambda para gestión de tareas.
-
----
-
-## Despliegue
-
-El proyecto está desplegado en Render:
-- **URL**: https://lambda-todo-local.onrender.com/
-- **Build Command**: `npm install && npm run build`
-- **Start Command**: `npm start`
-
-### 💬 Nota final
-
-Proyecto realizado como simulación profesional de una función AWS Lambda con arquitectura modular, validación robusta y tests.
-No requiere conexión a AWS. Se ejecuta completamente de forma local y está listo para producción.
+📅 Proyecto desarrollado como parte de la Prueba Técnica - NXT Abogados (Parte 2)
+👨‍💻 Autor: Christopher Eduardo Valdivia Baca
+📍 Lima, Perú
