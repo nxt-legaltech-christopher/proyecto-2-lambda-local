@@ -77,9 +77,10 @@ curl https://lambda-todo-local.onrender.com/todos
 curl -X POST https://lambda-todo-local.onrender.com/todos \
   -H "Content-Type: application/json" \
   -d '{"titulo": "Mi nueva tarea"}'
-{"id":"7f91a00a-0c6a-43cb-9ebc-10cfed60a57f","titulo":"Mi nueva tarea","completada":false}
-
 ```
+
+Respuesta esperada (ejemplo):
+{"id":"7f91a00a-0c6a-43cb-9ebc-10cfed60a57f","titulo":"Mi nueva tarea","completada":false}
 
 ---
 
